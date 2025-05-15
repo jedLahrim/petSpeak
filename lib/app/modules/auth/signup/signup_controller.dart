@@ -54,6 +54,10 @@ class SignupController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          mainButton: TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('OK'),
+          ),
         );
         return;
       }
@@ -83,6 +87,10 @@ class SignupController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          mainButton: TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('OK'),
+          ),
         );
       }
     }
@@ -98,6 +106,10 @@ class SignupController extends GetxController {
       'Notice',
       'Google login not implemented yet',
       snackPosition: SnackPosition.BOTTOM,
+      mainButton: TextButton(
+        onPressed: () => Get.back(),
+        child: const Text('OK'),
+      ),
     );
   }
 

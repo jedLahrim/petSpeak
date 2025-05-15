@@ -50,7 +50,7 @@ class PetSpeakApp extends StatelessWidget {
       initialRoute: Routes.SPLASH,
       initialBinding: SplashBinding(),
       getPages: AppPages.routes,
-      // defaultTransition: Transition.cupertino,
+      defaultTransition: Transition.noTransition,
       // transitionDuration: const Duration(milliseconds: 300),
     );
   }

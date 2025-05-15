@@ -66,6 +66,7 @@ class TranslationsView extends GetView<TranslationsController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
+            blurStyle: BlurStyle.solid,
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
             spreadRadius: 1,
@@ -262,6 +263,7 @@ class TranslationsView extends GetView<TranslationsController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
+            blurStyle: BlurStyle.solid,
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
             spreadRadius: 1,
@@ -319,6 +321,7 @@ class TranslationsView extends GetView<TranslationsController> {
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
+                blurStyle: BlurStyle.solid,
                 color: Colors.black.withOpacity(0.05),
                 blurRadius: 8,
                 spreadRadius: 1,
@@ -479,7 +482,7 @@ class TranslationsView extends GetView<TranslationsController> {
             ),
           ),
 
-          const SizedBox(height: 150),
+          const SizedBox(height: 100),
 
           // Record button
           MicrophoneButton(

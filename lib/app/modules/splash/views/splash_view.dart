@@ -44,6 +44,7 @@ class SplashView extends GetView<SplashController> {
                     borderRadius: BorderRadius.circular(80),
                     boxShadow: [
                       BoxShadow(
+                        blurStyle: BlurStyle.solid,
                         color: Colors.black.withOpacity(0.2),
                         blurRadius: 8,
                         offset: const Offset(0, 4),

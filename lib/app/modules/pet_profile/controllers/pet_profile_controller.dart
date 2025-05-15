@@ -82,6 +82,10 @@ class PetProfileController extends GetxController {
           'Success',
           'Profile picture updated!',
           snackPosition: SnackPosition.BOTTOM,
+          mainButton: TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('OK'),
+          ),
         );
       }
     } catch (e) {
@@ -89,6 +93,10 @@ class PetProfileController extends GetxController {
         'Error',
         'Failed to update profile picture',
         snackPosition: SnackPosition.BOTTOM,
+        mainButton: TextButton(
+          onPressed: () => Get.back(),
+          child: const Text('OK'),
+        ),
       );
     }
   }
@@ -120,6 +128,10 @@ class PetProfileController extends GetxController {
         'Error',
         'Please enter your pet\'s name',
         snackPosition: SnackPosition.BOTTOM,
+        mainButton: TextButton(
+          onPressed: () => Get.back(),
+          child: const Text('OK'),
+        ),
       );
       return;
     }
@@ -129,6 +141,10 @@ class PetProfileController extends GetxController {
       'Success',
       'Pet profile saved successfully!',
       snackPosition: SnackPosition.BOTTOM,
+      mainButton: TextButton(
+        onPressed: () => Get.back(),
+        child: const Text('OK'),
+      ),
     );
 
     Get.back();
@@ -149,6 +165,10 @@ class PetProfileController extends GetxController {
           'Success',
           'Pet profile deleted successfully!',
           snackPosition: SnackPosition.BOTTOM,
+          mainButton: TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('OK'),
+          ),
         );
       },
     );

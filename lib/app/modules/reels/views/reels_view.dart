@@ -70,6 +70,10 @@ class ReelsView extends GetView<ReelsController> {
                         'Coming Soon',
                         'Create Reels feature will be available soon!',
                         snackPosition: SnackPosition.BOTTOM,
+                        mainButton: TextButton(
+                          onPressed: () => Get.back(),
+                          child: const Text('OK'),
+                        ),
                       );
                     },
                   ),

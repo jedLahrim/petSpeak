@@ -131,6 +131,10 @@ class ReelsController extends GetxController {
             ? 'Reel saved to your collection'
             : 'Reel removed from your collection',
         snackPosition: SnackPosition.BOTTOM,
+        mainButton: TextButton(
+          onPressed: () => Get.back(),
+          child: const Text('OK'),
+        ),
       );
     }
   }
@@ -140,6 +144,10 @@ class ReelsController extends GetxController {
       'Share',
       'Sharing options opened',
       snackPosition: SnackPosition.BOTTOM,
+      mainButton: TextButton(
+        onPressed: () => Get.back(),
+        child: const Text('OK'),
+      ),
     );
   }
 

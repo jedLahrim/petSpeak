@@ -97,6 +97,7 @@ class _MicrophoneButtonState extends State<MicrophoneButton>
                 color: buttonColor,
                 boxShadow: [
                   BoxShadow(
+                    blurStyle: BlurStyle.solid,
                     color: buttonColor.withOpacity(0.4),
                     blurRadius: widget.isRecording ? 16.0 : 8.0,
                     spreadRadius: widget.isRecording ? 4.0 : 2.0,

@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:petspeak_ai/app/routes/app_routes.dart';
 
 class TranslationsController extends GetxController {
   final ScrollController scrollController = ScrollController();
-  bool _shouldScroll = false;
+  bool _shouldScroll = true;
 
   bool get shouldScroll => _shouldScroll;
 
@@ -197,7 +197,6 @@ class TranslationsController extends GetxController {
         // });
         triggerScroll();
       });
-      print('test');
     } catch (e) {
       rethrow;
     }
@@ -209,6 +208,10 @@ class TranslationsController extends GetxController {
       'Replay',
       'Playing audio recording...',
       snackPosition: SnackPosition.BOTTOM,
+      mainButton: TextButton(
+        onPressed: () => Get.back(),
+        child: const Text('OK'),
+      ),
     );
 
     // In a real app, this would play the audio recording
@@ -220,6 +223,10 @@ class TranslationsController extends GetxController {
       'Saved',
       'Translation saved to your history!',
       snackPosition: SnackPosition.BOTTOM,
+      mainButton: TextButton(
+        onPressed: () => Get.back(),
+        child: const Text('OK'),
+      ),
     );
 
     // In a real app, this would save the translation to history
@@ -231,6 +238,10 @@ class TranslationsController extends GetxController {
       'Share',
       'Sharing options opened!',
       snackPosition: SnackPosition.BOTTOM,
+      mainButton: TextButton(
+        onPressed: () => Get.back(),
+        child: const Text('OK'),
+      ),
     );
 
     // In a real app, this would open share options

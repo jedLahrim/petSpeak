@@ -1,66 +1,73 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:petspeak_ai/app/data/models/pet_model.dart';
 import 'package:petspeak_ai/app/routes/app_routes.dart';
+
+import '../../../data/models/translation_model.dart';
 
 class HomeController extends GetxController {
   final RxInt selectedPetIndex = 0.obs;
 
   // Mock data - would come from API in real app
-  final List<Map<String, dynamic>> pets = [
-    {
-      'id': '1',
-      'name': 'Buddy',
-      'type': 'dog',
-      'breed': 'Golden Retriever',
-      'birthDate': '2020-04-15',
-      'gender': 'male',
-      'weight': 28.5,
-      'profileImageUrl':
+  final List<PetModel> pets = [
+    PetModel(
+      id: '1',
+      name: 'Buddy',
+      type: 'dog',
+      breed: 'Golden Retriever',
+      birthDate: DateTime(2020, 4, 15),
+      gender: 'male',
+      weight: 28.5,
+      profileImageUrl:
           'https://images.pexels.com/photos/2253275/pexels-photo-2253275.jpeg?auto=compress&cs=tinysrgb&w=300',
-    },
-    {
-      'id': '2',
-      'name': 'Luna',
-      'type': 'cat',
-      'breed': 'Siamese',
-      'birthDate': '2021-01-10',
-      'gender': 'female',
-      'weight': 4.2,
-      'profileImageUrl':
+    ),
+    PetModel(
+      id: '2',
+      name: 'Luna',
+      type: 'cat',
+      breed: 'Golden Retriever',
+      birthDate: DateTime(2020, 4, 15),
+      gender: 'female',
+      weight: 4.2,
+      profileImageUrl:
           'https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&w=300',
-    },
+    )
   ];
 
-  final List<Map<String, dynamic>> recentTranslations = [
-    {
-      'id': '1',
-      'petId': '1',
-      'mode': 'pet-to-human',
-      'petType': 'dog',
-      'originalText': 'Woof woof!',
-      'translatedText': 'I\'m really excited to go for a walk!',
-      'date': 'Today',
-      'isFavorite': true,
-    },
-    {
-      'id': '2',
-      'petId': '1',
-      'mode': 'human-to-pet',
-      'petType': 'dog',
-      'originalText': 'Do you want a treat?',
-      'translatedText': 'Bark bark! (Yes, I would love one!)',
-      'date': 'Yesterday',
-      'isFavorite': false,
-    },
-    {
-      'id': '3',
-      'petId': '2',
-      'mode': 'pet-to-human',
-      'petType': 'cat',
-      'originalText': 'Meow meow',
-      'translatedText': 'My food bowl is empty, please fill it now!',
-      'date': 'Yesterday',
-      'isFavorite': false,
-    },
+  final List<TranslationModel> recentTranslations = [
+    TranslationModel(
+      id: '1',
+      petId: '1',
+      mode: 'pet-to-human',
+      petType: 'dog',
+      originalText: 'Woof woof!',
+      translatedText: 'I\'m really excited to go for a walk!',
+      isFavorite: true,
+      createdAt: DateTime.now(),
+      language: 'en',
+    ),
+    TranslationModel(
+      id: '2',
+      petId: '1',
+      mode: 'human-to-pet',
+      petType: 'dog',
+      originalText: 'Do you want a treat?',
+      translatedText: 'Bark bark! (Yes, I would love one!)',
+      isFavorite: true,
+      createdAt: DateTime.now(),
+      language: 'en',
+    ),
+    TranslationModel(
+      id: '3',
+      petId: '2',
+      mode: 'pet-to-human',
+      petType: 'cat',
+      originalText: 'Meow meow',
+      translatedText: 'My food bowl is empty, please fill it now!',
+      isFavorite: false,
+      createdAt: DateTime.now(),
+      language: 'en',
+    ),
   ];
 
   final List<Map<String, dynamic>> healthTips = [
@@ -175,6 +182,44 @@ class HomeController extends GetxController {
     Get.snackbar(
       'Coming Soon',
       'Health tips section will be available in the next update!',
+      mainButton: TextButton(
+        onPressed: () => Get.back(),
+        child: const Text('OK'),
+      ),
     );
+  }
+
+  String getFriendlyDate(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    final dateToCheck = DateTime(date.year, date.month, date.day);
+
+    if (dateToCheck == today) {
+      return 'Today';
+    } else if (dateToCheck == yesterday) {
+      return 'Yesterday';
+    } else {
+      // Format other dates (e.g., "May 15, 2024")
+      return '${_getMonthName(date.month)} ${date.day}, ${date.year}';
+    }
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    return months[month - 1];
   }
 }

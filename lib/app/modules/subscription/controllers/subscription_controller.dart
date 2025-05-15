@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SubscriptionPlan {
@@ -74,6 +75,10 @@ class SubscriptionController extends GetxController {
         'Error',
         'Please select a subscription plan',
         snackPosition: SnackPosition.BOTTOM,
+        mainButton: TextButton(
+          onPressed: () => Get.back(),
+          child: const Text('OK'),
+        ),
       );
       return;
     }
@@ -88,6 +93,10 @@ class SubscriptionController extends GetxController {
         'Success',
         'Subscription activated successfully!',
         snackPosition: SnackPosition.BOTTOM,
+        mainButton: TextButton(
+          onPressed: () => Get.back(),
+          child: const Text('OK'),
+        ),
       );
 
       Get.back();
@@ -96,6 +105,10 @@ class SubscriptionController extends GetxController {
         'Error',
         'Failed to process subscription',
         snackPosition: SnackPosition.BOTTOM,
+        mainButton: TextButton(
+          onPressed: () => Get.back(),
+          child: const Text('OK'),
+        ),
       );
     } finally {
       isLoading.value = false;
@@ -107,6 +120,10 @@ class SubscriptionController extends GetxController {
       'Restore Purchases',
       'Checking for previous purchases...',
       snackPosition: SnackPosition.BOTTOM,
+      mainButton: TextButton(
+        onPressed: () => Get.back(),
+        child: const Text('OK'),
+      ),
     );
   }
 }

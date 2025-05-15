@@ -207,6 +207,7 @@ class AskVetView extends GetView<AskVetController> {
                 ),
                 boxShadow: [
                   BoxShadow(
+                    blurStyle: BlurStyle.solid,
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 4,
                     offset: const Offset(0, 2),

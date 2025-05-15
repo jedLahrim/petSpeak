@@ -10,4 +10,5 @@ abstract class Routes {
   static const PET_PROFILE = '/pet-profile';
   static const REELS = '/reels';
   static const SUBSCRIPTION = '/subscription';
+  static const TEST = '/test';
 }

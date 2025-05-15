@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:petspeak_ai/app/data/models/translation_model.dart';
 import 'package:petspeak_ai/app/routes/app_routes.dart';
 
+import '../../../common/utils/util.dart';
+
 class TranslationFilter {
   String petType;
   String mode;
@@ -152,22 +154,13 @@ class TranslationsHistoryController extends GetxController {
   }
 
   void playAudio(TranslationModel translation) {
-    Get.snackbar(
-      'Playing Audio',
-      'Now playing audio recording...',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-
+    snackbar('Playing Audio', 'Now playing audio recording...',
+        SnackPosition.BOTTOM);
     // In a real app, this would play the audio recording
   }
 
   void shareTranslation(TranslationModel translation) {
-    Get.snackbar(
-      'Share',
-      'Sharing options opened!',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-
+    snackbar('Share', 'Sharing options opened!', SnackPosition.BOTTOM);
     // In a real app, this would open share options
   }
 
@@ -187,15 +180,14 @@ class TranslationsHistoryController extends GetxController {
       if (filteredIndex != -1) {
         filteredTranslations[filteredIndex] = updatedTranslation;
       }
-
-      Get.snackbar(
+      snackbar(
         updatedTranslation.isFavorite
             ? 'Added to Favorites'
             : 'Removed from Favorites',
         updatedTranslation.isFavorite
             ? 'Translation added to your favorites!'
             : 'Translation removed from your favorites!',
-        snackPosition: SnackPosition.BOTTOM,
+        SnackPosition.BOTTOM,
       );
     }
   }
@@ -218,6 +210,10 @@ class TranslationsHistoryController extends GetxController {
           'Deleted',
           'Translation has been deleted!',
           snackPosition: SnackPosition.BOTTOM,
+          mainButton: TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('OK'),
+          ),
         );
       },
     );

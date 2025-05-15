@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:petspeak_ai/app/common/utils/util.dart';
 import 'package:petspeak_ai/app/routes/app_routes.dart';
 
 class AskVetController extends GetxController {
@@ -85,12 +86,10 @@ class AskVetController extends GetxController {
   }
 
   void pickImage() {
-    Get.snackbar(
-      'Upload Photo',
-      'Photo upload functionality will be available soon!',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-
+    snackbar(
+        'Upload Photo',
+        'Photo upload functionality will be available soon!',
+        SnackPosition.BOTTOM);
     // In a real app, this would open image picker
   }
 

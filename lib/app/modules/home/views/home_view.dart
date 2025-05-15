@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:petspeak_ai/app/common/icons/reels_icon.dart';
+import 'package:petspeak_ai/app/data/models/pet_model.dart';
 import 'package:petspeak_ai/app/modules/home/controllers/home_controller.dart';
 import 'package:petspeak_ai/app/utils/constants/app_colors.dart';
 import 'package:petspeak_ai/global_widgets/custom_bottom_nav_bar.dart';
@@ -26,7 +28,7 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildPetHomePage(BuildContext context, dynamic pet) {
+  Widget _buildPetHomePage(BuildContext context, PetModel pet) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Column(
@@ -41,7 +43,7 @@ class HomeView extends GetView<HomeController> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
-              'Hello, ${pet['name']}\'s human!',
+              'Hello, ${pet.name}\'s human!',
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -154,13 +156,13 @@ class HomeView extends GetView<HomeController> {
       child: Row(
         children: [
           PetAvatar(
-            imageUrl: selectedPet['profileImageUrl'],
-            petType: selectedPet['type'],
+            imageUrl: selectedPet.profileImageUrl,
+            petType: selectedPet.type,
             size: 40,
           ),
           const SizedBox(width: 8),
           Text(
-            selectedPet['name'],
+            selectedPet.name,
             style: const TextStyle(
               fontWeight: FontWeight.w600,
             ),
@@ -197,12 +199,12 @@ class HomeView extends GetView<HomeController> {
 
                 return ListTile(
                   leading: PetAvatar(
-                    imageUrl: pet['profileImageUrl'],
-                    petType: pet['type'],
+                    imageUrl: pet.profileImageUrl,
+                    petType: pet.type,
                     size: 40,
                   ),
-                  title: Text(pet['name']),
-                  subtitle: Text(pet['breed'] ?? ''),
+                  title: Text(pet.name),
+                  subtitle: Text(pet.breed ?? ''),
                   trailing: Obx(() => controller.selectedPetIndex.value == index
                       ? const Icon(Icons.check_circle, color: AppColors.primary)
                       : const SizedBox.shrink()),
@@ -252,14 +254,14 @@ class HomeView extends GetView<HomeController> {
           _buildActionCard(
             context,
             'Pet Reels',
-            Icons.video_collection,
+            ReelIcon.reels,
             AppColors.accent,
             () => controller.navigateToReels(),
           ),
           _buildActionCard(
             context,
             'Profile',
-            Icons.pets,
+            Icons.person,
             Colors.amber,
             () => controller.navigateToPetProfile(),
           ),
@@ -287,6 +289,7 @@ class HomeView extends GetView<HomeController> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
+              blurStyle: BlurStyle.solid,
               color: Colors.black.withOpacity(0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
@@ -364,6 +367,7 @@ class HomeView extends GetView<HomeController> {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
+                    blurStyle: BlurStyle.solid,
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
@@ -425,6 +429,7 @@ class HomeView extends GetView<HomeController> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
+                  blurStyle: BlurStyle.solid,
                   color: Colors.black.withOpacity(0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
@@ -437,21 +442,21 @@ class HomeView extends GetView<HomeController> {
                 Row(
                   children: [
                     Icon(
-                      translation['mode'] == 'pet-to-human'
+                      translation.mode == 'pet-to-human'
                           ? Icons.pets
                           : Icons.record_voice_over,
-                      color: translation['petType'] == 'dog'
+                      color: translation.petType == 'dog'
                           ? AppColors.dogMode
                           : AppColors.catMode,
                       size: 16,
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      translation['mode'] == 'pet-to-human'
+                      translation.mode == 'pet-to-human'
                           ? 'Pet to Human'
                           : 'Human to Pet',
                       style: TextStyle(
-                        color: translation['petType'] == 'dog'
+                        color: translation.petType == 'dog'
                             ? AppColors.dogMode
                             : AppColors.catMode,
                         fontWeight: FontWeight.w500,
@@ -460,7 +465,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                     const Spacer(),
                     Text(
-                      translation['date'],
+                      controller.getFriendlyDate(translation.createdAt),
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 12,
@@ -471,7 +476,7 @@ class HomeView extends GetView<HomeController> {
                 const SizedBox(height: 12),
                 Expanded(
                   child: Text(
-                    translation['translatedText'],
+                    translation.translatedText,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -491,12 +496,23 @@ class HomeView extends GetView<HomeController> {
                       constraints: const BoxConstraints(),
                     ),
                     const SizedBox(width: 16),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.favorite_border, size: 20),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
+                    translation.isFavorite
+                        ? IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.favorite,
+                              size: 20,
+                              color: Colors.red,
+                            ),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          )
+                        : IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.favorite_border, size: 20),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
                     const SizedBox(width: 16),
                     IconButton(
                       onPressed: () {},
@@ -540,6 +556,7 @@ class HomeView extends GetView<HomeController> {
               ),
               boxShadow: [
                 BoxShadow(
+                  blurStyle: BlurStyle.solid,
                   color: Colors.black.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
@@ -631,6 +648,7 @@ class HomeView extends GetView<HomeController> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
+                  blurStyle: BlurStyle.solid,
                   color: Colors.black.withOpacity(0.05),
                   blurRadius: 8,
                   offset: const Offset(0, 2),

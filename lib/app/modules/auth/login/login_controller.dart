@@ -42,6 +42,10 @@ class LoginController extends GetxController {
       'Notice',
       'Google login not implemented yet',
       snackPosition: SnackPosition.BOTTOM,
+      mainButton: TextButton(
+        onPressed: () => Get.back(),
+        child: const Text('OK'),
+      ),
     );
   }
 
@@ -59,6 +63,10 @@ class LoginController extends GetxController {
       'Notice',
       'Forgot password not implemented yet',
       snackPosition: SnackPosition.BOTTOM,
+      mainButton: TextButton(
+        onPressed: () => Get.back(),
+        child: const Text('OK'),
+      ),
     );
   }
 

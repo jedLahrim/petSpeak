@@ -79,7 +79,7 @@ class CustomBottomNavBar extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         onTap(index);
-        Get.toNamed(routeName);
+        Get.offNamed(routeName);
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
