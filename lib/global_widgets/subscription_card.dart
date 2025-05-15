@@ -31,6 +31,7 @@ class SubscriptionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
+            blurStyle: BlurStyle.solid,
             color: isPopular
                 ? AppColors.primary.withOpacity(0.3)
                 : Colors.black.withOpacity(0.1),

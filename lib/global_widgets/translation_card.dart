@@ -50,6 +50,7 @@ class TranslationCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
+              blurStyle: BlurStyle.solid,
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               spreadRadius: 1,

@@ -56,6 +56,7 @@ class AskVetView extends GetView<AskVetController> {
         color: Theme.of(context).cardTheme.color,
         boxShadow: [
           BoxShadow(
+            blurStyle: BlurStyle.solid,
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
@@ -284,6 +285,7 @@ class AskVetView extends GetView<AskVetController> {
         color: Theme.of(context).scaffoldBackgroundColor,
         boxShadow: [
           BoxShadow(
+            blurStyle: BlurStyle.solid,
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
