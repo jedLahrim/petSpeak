@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:petspeak_ai/app/common/icons/ask_vet.dart';
-import 'package:petspeak_ai/app/common/icons/reels.dart';
+import 'package:petspeak_ai/app/common/icons/reels_icon.dart';
 import 'package:petspeak_ai/app/routes/app_routes.dart';
 import 'package:petspeak_ai/app/utils/constants/app_colors.dart';
 
@@ -86,13 +86,13 @@ class CustomBottomNavBar extends StatelessWidget {
         width: 70,
         padding: const EdgeInsets.only(top: 12),
         decoration: BoxDecoration(
-          // border: Border(
-          //   top: BorderSide(
-          //     color: isSelected ? AppColors.primary : Colors.transparent,
-          //     width: 3,
-          //   ),
-          // ),
-        ),
+            // border: Border(
+            //   top: BorderSide(
+            //     color: isSelected ? AppColors.primary : Colors.transparent,
+            //     width: 3,
+            //   ),
+            // ),
+            ),
         child: Column(
           children: [
             Icon(

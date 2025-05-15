@@ -5,6 +5,7 @@ import 'package:petspeak_ai/app/utils/constants/app_colors.dart';
 import 'package:petspeak_ai/global_widgets/custom_bottom_nav_bar.dart';
 import 'package:petspeak_ai/global_widgets/pet_avatar.dart';
 
+import '../../../routes/app_routes.dart';
 import '../controllers/theme_controller.dart';
 
 class PetProfileView extends GetView<PetProfileController> {
@@ -28,6 +29,14 @@ class PetProfileView extends GetView<PetProfileController> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () => _showAddPetDialog(context),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              // Add logout logic here
+              // using GetX for navigation:
+              Get.toNamed(Routes.LOGIN);
+            },
           ),
         ],
       ),
