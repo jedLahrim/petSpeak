@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:petspeak_ai/app/modules/translations/controllers/translations_controller.dart';
 import 'package:petspeak_ai/app/utils/constants/app_colors.dart';
 import 'package:petspeak_ai/global_widgets/audio_waveform_widget.dart';
 import 'package:petspeak_ai/global_widgets/custom_bottom_nav_bar.dart';
 import 'package:petspeak_ai/global_widgets/pet_speak_button.dart';
+
+import '../controllers/translations_controller.dart';
 
 class TranslationsView extends GetView<TranslationsController> {
   const TranslationsView({super.key});
