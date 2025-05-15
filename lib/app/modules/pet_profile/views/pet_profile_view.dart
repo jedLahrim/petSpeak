@@ -348,6 +348,7 @@ class PetProfileView extends GetView<PetProfileController> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
+            blurStyle: BlurStyle.solid,
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
             spreadRadius: 1,
