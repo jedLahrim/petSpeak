@@ -14,6 +14,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
         title: const Text('Premium Features'),
       ),
       body: SingleChildScrollView(
+        controller: controller.pageScrollController,
         child: Column(
           children: [
             // Header
@@ -80,24 +81,32 @@ class SubscriptionView extends GetView<SubscriptionController> {
   }
 
   Widget _buildSubscriptionPlans(BuildContext context) {
+    // After the widget builds, animate the scroll
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.startAutoScrollAnimation();
+    });
+
     return SizedBox(
       height: 500,
       child: ListView.builder(
+        controller: controller.scrollController,
+        // Assign the controller
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         itemCount: controller.plans.length,
         itemBuilder: (context, index) {
           final plan = controller.plans[index];
-          return SubscriptionCard(
-            title: plan.title,
-            price: plan.price,
-            period: plan.period,
-            features: plan.features,
-            isPopular: plan.isPopular,
-            isCurrentPlan: false,
-            onSubscribe: () => controller.selectPlan(plan.id),
-          );
+          return Obx(() => SubscriptionCard(
+                title: plan.title,
+                price: plan.price,
+                period: plan.period,
+                features: plan.features,
+                isPopular: plan.isPopular,
+                isCurrentPlan: false,
+                isSelected: controller.selectedPlanId.value == plan.id,
+                onSubscribe: () => controller.selectPlan(plan.id),
+              ));
         },
       ),
     );
@@ -187,22 +196,30 @@ class SubscriptionView extends GetView<SubscriptionController> {
   Widget _buildSubscribeButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Obx(() => ElevatedButton(
-            onPressed: controller.isLoading.value ? null : controller.subscribe,
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 56),
-            ),
-            child: controller.isLoading.value
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : const Text('Subscribe Now'),
-          )),
+      child: Obx(() {
+        final isLoading = controller.isLoading.value;
+        final selectedPlanId = controller.selectedPlanId.value;
+
+        return ElevatedButton(
+          onPressed:
+              isLoading || selectedPlanId.isEmpty ? null : controller.subscribe,
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 56),
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+          ),
+          child: isLoading
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
+              : const Text('Subscribe Now'),
+        );
+      }),
     );
   }
 

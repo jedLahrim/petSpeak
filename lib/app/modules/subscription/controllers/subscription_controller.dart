@@ -22,6 +22,16 @@ class SubscriptionPlan {
 class SubscriptionController extends GetxController {
   final RxString selectedPlanId = ''.obs;
   final RxBool isLoading = false.obs;
+  final ScrollController scrollController = ScrollController();
+  final ScrollController pageScrollController = ScrollController();
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Select the most popular plan by default
+    final popularPlan = plans.firstWhere((plan) => plan.isPopular);
+    selectedPlanId.value = popularPlan.id;
+  }
 
   final List<SubscriptionPlan> plans = [
     SubscriptionPlan(
@@ -65,8 +75,53 @@ class SubscriptionController extends GetxController {
     ),
   ];
 
+  void startAutoScrollAnimation() {
+    // First scroll to the end after 1 second
+    Future.delayed(const Duration(seconds: 1), () {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+
+      // Then scroll back to the most popular plan after 1.5 seconds
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        if (scrollController.hasClients) {
+          final popularPlanIndex = plans.indexWhere((plan) => plan.isPopular);
+          if (popularPlanIndex != -1) {
+            scrollController.animateTo(
+              (280.0 + 16) * popularPlanIndex, // card width + margin
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+            );
+          }
+        }
+      });
+    });
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
+  }
+
   void selectPlan(String planId) {
+    // Set the selected plan
     selectedPlanId.value = planId;
+
+    // Scroll to the subscribe button after selecting a plan
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (pageScrollController.hasClients) {
+        pageScrollController.animateTo(
+          pageScrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
   }
 
   Future<void> subscribe() async {
