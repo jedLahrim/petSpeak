@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:petspeak_ai/app/common/utils/util.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:petspeak_ai/app/routes/app_routes.dart';
 
 class AskVetController extends GetxController {
   final TextEditingController textController = TextEditingController();
   final ScrollController scrollController = ScrollController();
   final RxList<Map<String, dynamic>> messages = <Map<String, dynamic>>[].obs;
+  final ImagePicker _picker = ImagePicker();
+  Rx<File?> selectedImage = Rx<File?>(null);
 
   @override
   void onInit() {
@@ -39,58 +43,151 @@ class AskVetController extends GetxController {
 
   void sendMessage() {
     final text = textController.text.trim();
-    if (text.isEmpty) return;
+    final now = DateTime.now();
+    final timestamp =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
-    // Add user message
-    messages.add({
-      'isUser': true,
-      'text': text,
-      'timestamp': _getCurrentTime(),
-    });
+    // If there's no text and no image, don't send anything
+    if (text.isEmpty && selectedImage.value == null) {
+      return;
+    }
 
-    // Clear input field
-    textController.clear();
+    // If there's an image, send it (with or without text)
+    if (selectedImage.value != null) {
+      final message = {
+        'isUser': true,
+        'text': text,
+        'imageUrl': selectedImage.value!.path,
+        'timestamp': timestamp,
+      };
 
-    // Scroll to bottom
-    _scrollToBottom();
+      messages.add(message);
+      textController.clear();
 
-    // Simulate processing delay
-    Future.delayed(const Duration(milliseconds: 500), () {
-      // Add typing indicator
-      messages.add({
-        'isUser': false,
-        'text': 'Typing...',
-        'isTyping': true,
-      });
+      // Clear the image after sending
+      final File sentImage = selectedImage.value!;
+      clearImage();
 
-      // Scroll to bottom
-      _scrollToBottom();
+      // Scroll to bottom after message is added
+      scrollToBottom();
 
-      // Simulate AI response delay
-      Future.delayed(const Duration(seconds: 1), () {
-        // Remove typing indicator
-        messages.removeWhere((message) => message['isTyping'] == true);
+      // Process the received image (and optional text)
+      _handleReceivedMessage(text, sentImage);
+    }
+    // If there's only text, send it as before
+    else if (text.isNotEmpty) {
+      final message = {
+        'isUser': true,
+        'text': text,
+        'timestamp': timestamp,
+      };
 
-        // Add AI response
-        final response = _generateResponse(text);
-        messages.add({
-          'isUser': false,
-          'text': response,
-          'timestamp': _getCurrentTime(),
-        });
+      messages.add(message);
+      textController.clear();
 
-        // Scroll to bottom
-        _scrollToBottom();
-      });
+      // Scroll to bottom after message is added
+      scrollToBottom();
+
+      // Process the received text message
+      _handleReceivedMessage(text, null);
+    }
+  }
+
+// Helper method to scroll to the bottom of the chat
+  void scrollToBottom() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (scrollController.hasClients) {
+        scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
-  void pickImage() {
-    snackbar(
-        'Upload Photo',
-        'Photo upload functionality will be available soon!',
-        SnackPosition.BOTTOM);
-    // In a real app, this would open image picker
+// Process received message and generate AI response
+  void _handleReceivedMessage(String text, File? image) {
+    // Show typing indicator
+    final typingMessage = {
+      'isUser': false,
+      'text': 'Dr. Chloe is typing...',
+      'timestamp': '',
+    };
+    messages.add(typingMessage);
+    scrollToBottom();
+
+    // Simulate AI response delay
+    Future.delayed(const Duration(seconds: 1), () {
+      // Remove typing indicator
+      messages.removeLast();
+
+      // Generate response based on message content
+      String response = '';
+      if (image != null) {
+        if (text.isEmpty) {
+          response =
+              "I can see the image you've shared. Could you tell me more about what concerns you have regarding your pet in this photo?";
+        } else {
+          response =
+              "Thanks for sharing this image along with your message. I'll do my best to help based on what I can see in the photo and the information you've provided.";
+        }
+      } else {
+        // Handle text-only messages as before
+        response = "Thank you for your question. I'll help you with that.";
+        // Your existing AI response logic here
+      }
+
+      // Add AI response
+      final now = DateTime.now();
+      final timestamp =
+          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+
+      final aiResponse = {
+        'isUser': false,
+        'text': response,
+        'timestamp': timestamp,
+      };
+
+      messages.add(aiResponse);
+      scrollToBottom();
+    });
+  }
+
+  Future<void> pickImage() async {
+    try {
+      // Open image picker
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1800,
+        maxHeight: 1800,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        // Update the selectedImage with the picked file
+        selectedImage.value = File(pickedFile.path);
+      } else {
+        // User canceled the picker
+        Get.snackbar(
+          'Cancelled',
+          'No image was selected',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      // Handle any errors
+      Get.snackbar(
+        'Error',
+        'Failed to pick image: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  // Method to clear the selected image
+  void clearImage() {
+    selectedImage.value = null;
   }
 
   void _scrollToBottom() {

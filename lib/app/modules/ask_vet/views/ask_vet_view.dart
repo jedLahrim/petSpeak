@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:petspeak_ai/app/modules/ask_vet/controllers/ask_vet_controller.dart';
@@ -169,8 +171,8 @@ class AskVetView extends GetView<AskVetController> {
             isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Vet avatar (only for vet messages)
           if (!isUser) ...[
+            // Vet avatar
             Container(
               width: 36,
               height: 36,
@@ -190,7 +192,6 @@ class AskVetView extends GetView<AskVetController> {
             const SizedBox(width: 8),
           ],
 
-          // Message content
           Flexible(
             child: Container(
               padding: const EdgeInsets.all(12),
@@ -222,28 +223,37 @@ class AskVetView extends GetView<AskVetController> {
                   if (message['imageUrl'] != null) ...[
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        message['imageUrl'] as String,
-                        width: double.infinity,
-                        height: 180,
-                        fit: BoxFit.cover,
-                      ),
+                      child: message['imageUrl'].startsWith('http')
+                          ? Image.network(
+                              message['imageUrl'] as String,
+                              width: double.infinity,
+                              height: 180,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.file(
+                              File(message['imageUrl']),
+                              width: double.infinity,
+                              height: 180,
+                              fit: BoxFit.cover,
+                            ),
                     ),
                     const SizedBox(height: 8),
                   ],
 
-                  // Message text
-                  Text(
-                    message['text'] as String,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: isUser ? AppColors.primary : null,
+                  // Message text (only show if not empty)
+                  if ((message['text'] as String).isNotEmpty) ...[
+                    Text(
+                      message['text'] as String,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isUser ? AppColors.primary : null,
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 4),
+                  ],
 
                   // Timestamp
                   if (message.containsKey('timestamp')) ...[
-                    const SizedBox(height: 4),
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Text(
@@ -279,72 +289,116 @@ class AskVetView extends GetView<AskVetController> {
   }
 
   Widget _buildInputArea(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        boxShadow: [
-          BoxShadow(
-            blurStyle: BlurStyle.solid,
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Camera/Image button
-          IconButton(
-            onPressed: controller.pickImage,
-            icon: const Icon(Icons.image),
-            color: AppColors.secondary,
-          ),
+    return Column(
+      children: [
+        // Image preview
+        Obx(() => controller.selectedImage.value != null
+            ? Stack(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    height: 200,
+                    // width: 300,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      image: DecorationImage(
+                        image: FileImage(controller.selectedImage.value!),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 24,
+                    child: GestureDetector(
+                      onTap: controller.clearImage,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.black54,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : const SizedBox.shrink()),
 
-          // Text input field
-          Expanded(
-            child: TextField(
-              controller: controller.textController,
-              decoration: InputDecoration(
-                hintText: 'Ask Dr. Chloe about your pet...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Theme.of(context).inputDecorationTheme.fillColor,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-              ),
-              textCapitalization: TextCapitalization.sentences,
-              keyboardType: TextInputType.text,
-              textInputAction: TextInputAction.send,
-              onSubmitted: (_) => controller.sendMessage(),
-            ),
+        // Input field and buttons
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                blurStyle: BlurStyle.solid,
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -5),
+              )
+            ],
           ),
-
-          const SizedBox(width: 8),
-
-          // Send button
-          GestureDetector(
-            onTap: controller.sendMessage,
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
+          child: Row(
+            children: [
+              // Camera/Image button
+              IconButton(
+                onPressed: controller.pickImage,
+                icon: const Icon(Icons.image),
                 color: AppColors.secondary,
-                shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.send,
-                color: Colors.white,
-                size: 20,
+
+              // Text input field
+              Expanded(
+                child: TextField(
+                  controller: controller.textController,
+                  decoration: InputDecoration(
+                    hintText: 'Ask Dr. Chloe about your pet...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Theme.of(context).inputDecorationTheme.fillColor,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                  ),
+                  textCapitalization: TextCapitalization.sentences,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => controller.sendMessage(),
+                ),
               ),
-            ),
+
+              const SizedBox(width: 8),
+
+              // Send button
+              GestureDetector(
+                onTap: controller.sendMessage,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: const BoxDecoration(
+                    color: AppColors.secondary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.send,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -526,15 +580,20 @@ class AskVetView extends GetView<AskVetController> {
                 ),
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
               // Action buttons
               Row(
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      padding: const EdgeInsets.only(right: 8),
+                      // Added right padding
                       child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12), // Smaller button
+                        ),
                         onPressed: () => Navigator.pop(context),
                         child: const Text('Close'),
                       ),
@@ -542,22 +601,26 @@ class AskVetView extends GetView<AskVetController> {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      padding: const EdgeInsets.only(left: 8),
+                      // Added left padding
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          // Smaller button
+                          backgroundColor: AppColors.secondary,
+                          foregroundColor: Colors.white,
+                        ),
                         onPressed: () {
                           Navigator.pop(context);
                           controller.navigateToSubscription();
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.secondary,
-                          foregroundColor: Colors.white,
-                        ),
                         child: const Text('Upgrade for More'),
                       ),
                     ),
                   ),
                 ],
-              )
+              ),
+              const SizedBox(height: 10), // Added extra space at bottom
             ],
           ),
         );
