@@ -1,127 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SubscriptionPlan {
-  final String id;
-  final String title;
-  final String price;
-  final String period;
-  final List<String> features;
-  final bool isPopular;
-
-  SubscriptionPlan({
-    required this.id,
-    required this.title,
-    required this.price,
-    required this.period,
-    required this.features,
-    this.isPopular = false,
-  });
-}
+import '../../../data/models/subscription_plan_model.dart';
+import '../../../data/services/scroll_service.dart';
+import '../repositories/subscription_repository.dart';
 
 class SubscriptionController extends GetxController {
+  final ScrollService scrollService = Get.put<ScrollService>(ScrollService());
+  final SubscriptionRepository subscriptionRepo = SubscriptionRepository();
   final RxString selectedPlanId = ''.obs;
   final RxBool isLoading = false.obs;
-  final ScrollController scrollController = ScrollController();
-  final ScrollController pageScrollController = ScrollController();
+
+  // Constants for subscription UI elements
+  static const double planCardWidth = 280.0;
+  static const double planCardSpacing = 16.0;
+
+  // Model for subscription plans
+  List<SubscriptionPlan> get plans => subscriptionRepo.getAll();
 
   @override
   void onInit() {
     super.onInit();
+
     // Select the most popular plan by default
-    final popularPlan = plans.firstWhere((plan) => plan.isPopular);
+    final popularPlan =
+        plans.firstWhere((plan) => plan.isPopular, orElse: () => plans.first);
     selectedPlanId.value = popularPlan.id;
   }
 
-  final List<SubscriptionPlan> plans = [
-    SubscriptionPlan(
-      id: 'basic',
-      title: 'Basic',
-      price: '\$4.99',
-      period: 'month',
-      features: [
-        'Unlimited pet translations',
-        'Basic health tips',
-        'Community access',
-        'Ad-free experience',
-      ],
-    ),
-    SubscriptionPlan(
-      id: 'premium',
-      title: 'Premium',
-      price: '\$9.99',
-      period: 'month',
-      features: [
-        'All Basic features',
-        'Advanced health tracking',
-        'Priority vet consultations',
-        'Exclusive content access',
-        'Multiple pet profiles',
-      ],
-      isPopular: true,
-    ),
-    SubscriptionPlan(
-      id: 'family',
-      title: 'Family',
-      price: '\$14.99',
-      period: 'month',
-      features: [
-        'All Premium features',
-        'Up to 5 family members',
-        'Shared pet profiles',
-        'Family event planning',
-        'Premium support',
-      ],
-    ),
-  ];
+  // Easy access to controllers for the subscription screen
+  ScrollController get horizontalScrollController =>
+      scrollService.getHorizontalController('subscription');
 
-  void startAutoScrollAnimation() {
-    // First scroll to the end after 1 second
-    Future.delayed(const Duration(seconds: 1), () {
-      if (scrollController.hasClients) {
-        scrollController.animateTo(
-          scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      }
+  ScrollController get verticalScrollController =>
+      scrollService.getVerticalController('subscription');
 
-      // Then scroll back to the most popular plan after 1.5 seconds
-      Future.delayed(const Duration(milliseconds: 1500), () {
-        if (scrollController.hasClients) {
-          final popularPlanIndex = plans.indexWhere((plan) => plan.isPopular);
-          if (popularPlanIndex != -1) {
-            scrollController.animateTo(
-              (280.0 + 16) * popularPlanIndex, // card width + margin
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeInOut,
-            );
-          }
-        }
-      });
-    });
+  // Public methods for UI interactions
+  void swipeToPlan(String planId) {
+    final planIndex = plans.indexWhere((plan) => plan.id == planId);
+    if (planIndex == -1) return;
+
+    scrollService.scrollHorizontalToItem(
+      screenName: 'subscription',
+      itemIndex: planIndex,
+      itemWidth: planCardWidth,
+      itemSpacing: planCardSpacing,
+    );
   }
 
-  @override
-  void onClose() {
-    scrollController.dispose();
-    super.onClose();
+  void startAutoScrollAnimation() {
+    scrollService.chainScrollActions(
+      actions: [
+        // First scroll to the end
+        () => scrollService.scrollHorizontalToEnd(screenName: 'subscription'),
+        // Then scroll back to the most popular plan
+        () {
+          final popularPlan = plans.firstWhere((plan) => plan.isPopular,
+              orElse: () => plans.first);
+          swipeToPlan(popularPlan.id);
+        },
+      ],
+      delays: [
+        1000,
+        1500
+      ], // Delay 1s before first action, then 1.5s before second action
+    );
   }
 
   void selectPlan(String planId) {
     // Set the selected plan
     selectedPlanId.value = planId;
 
-    // Scroll to the subscribe button after selecting a plan
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (pageScrollController.hasClients) {
-        pageScrollController.animateTo(
-          pageScrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 800),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
+    // Chain scroll actions: first to the selected plan, then to the subscribe button
+    scrollService.chainScrollActions(
+      actions: [
+        () => swipeToPlan(planId),
+        () => scrollService.scrollVerticalToBottom(screenName: 'subscription'),
+      ],
+      delays: [200, 500],
+    );
   }
 
   Future<void> subscribe() async {

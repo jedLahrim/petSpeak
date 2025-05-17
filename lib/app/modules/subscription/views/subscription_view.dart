@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:petspeak_ai/app/modules/subscription/controllers/subscription_controller.dart';
 import 'package:petspeak_ai/app/utils/constants/app_colors.dart';
 import 'package:petspeak_ai/global_widgets/subscription_card.dart';
+
+import '../controllers/subscription_controller.dart';
 
 class SubscriptionView extends GetView<SubscriptionController> {
   const SubscriptionView({super.key});
@@ -14,7 +15,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
         title: const Text('Premium Features'),
       ),
       body: SingleChildScrollView(
-        controller: controller.pageScrollController,
+        controller: controller.verticalScrollController,
         child: Column(
           children: [
             // Header
@@ -89,7 +90,7 @@ class SubscriptionView extends GetView<SubscriptionController> {
     return SizedBox(
       height: 500,
       child: ListView.builder(
-        controller: controller.scrollController,
+        controller: controller.horizontalScrollController,
         // Assign the controller
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
