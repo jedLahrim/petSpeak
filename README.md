@@ -1,4 +1,4 @@
-# petspeak_ai
+# PetSpeak AI
 
 A new Flutter project.
 
